@@ -239,69 +239,130 @@ class Seller extends User {
         this.rating = rating;
     }
 
-    public void manageMenu(ArrayList<Food> menu) {
+     public void manageMenu(ArrayList<MenuManagement> menu) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("==== Opsi Menu ====");
-            System.out.println("1. Create Food");
-            System.out.println("2. Show Food");
-            System.out.println("3. Update Food");
-            System.out.println("4. Delete Food");
+            System.out.println("1. Create Menu");
+            System.out.println("2. Show Menu");
+            System.out.println("3. Update Menu");
+            System.out.println("4. Delete Menu");
             System.out.println("5. Back");
             System.out.println("====================");
-            System.out.print(">> "); 
+            System.out.print(">> ");
             int choice = scanner.nextInt();
             scanner.nextLine();
 
             switch (choice) {
                 case 1:
-                    System.out.println("=== Opsi Create Food ===");
-                    System.out.print("FoodName    >> ");
+                    System.out.println("=== Opsi Create Menu ===");
+                    System.out.println("1. Create Food");
+                    System.out.println("2. Create drink");
+                    System.out.println(">> ");
+                    int createChoices = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Name    >> ");
                     String name = scanner.nextLine();
-                    System.out.print("PrepTime    >> ");
-                    String prepTime = scanner.nextLine();
-                    System.out.print("Ingredients >> ");
-                    String ingredients = scanner.nextLine();
-                    System.out.print("Harga >> ");
+                    System.out.println("Price    >>");
                     float price = scanner.nextFloat();
-                    menu.add(new Food(menu.size() + 1, name, price, prepTime, ingredients.split(",")));
-                    System.out.println("Food created successfully!");
-                    break;
+                    scanner.nextLine();
+                    System.out.println("Stock    >>");
+                    int stock = scanner.nextInt();
+                    scanner.nextLine();
+                switch (createChoices) {
+                    case 1:
+                        System.out.print("PrepTime    >> ");
+                        String prepTime = scanner.nextLine();
+                        System.out.print("Ingredients >> ");
+                        String ingredients = scanner.nextLine();
+                        menu.add(new Food(menu.size() + 1, name, price, prepTime, ingredients.split(","),stock));
+                        break;
+                    case 2:
+                        System.out.print("Volume    >> ");
+                        int volume = scanner.nextInt();
+                        System.out.print("Is Hot >> ");
+                        boolean isHot = scanner.nextBoolean();
+                        menu.add(new Drink(menu.size()+1, name, price, volume, isHot, stock));
+                        break;
+                    default:
+                        System.out.println("[error]masukan pilihan yang benar");
+                        break;
+                }
                 case 2:
-                    System.out.println("=== Opsi Show Food ===");
+                    System.out.println("=== Opsi Show Menu ===");
                     if (menu.isEmpty()) {
                         System.out.println("data kosong!");
                     } else {
-                        for (Food food : menu) {
-                            food.getDetails();
+                        System.out.println("== List menu Food ==");
+                        System.out.println("== Food ==");
+                        for (MenuManagement menus : menu) {
+                            if(menus instanceof Food){
+                                Food foods = (Food) menus;
+                                foods.getDetails();
+                            }
+                            System.out.println("---------------");
+                        }
+                        System.out.println("== Drinks");
+                        for (MenuManagement menus : menu) {
+                            if(menus instanceof Drink){
+                                Drink drinks = (Drink) menus;
+                                drinks.getDetails();
+                            }
+                            System.out.println("---------------");
                         }
                     }
                     break;
                 case 3:
-                    System.out.println("=== Opsi Update Food ===");
-                    System.out.print("FoodId >> ");
-                    int foodId = scanner.nextInt();
+                    System.out.println("=== Opsi Update Menu ===");
+                    System.out.print("MenuId >> ");
+                    int menuId = scanner.nextInt();
                     scanner.nextLine();
-                    if (foodId > 0 && foodId <= menu.size()) {
-                        Food food = menu.get(foodId - 1);
-                        System.out.print("FoodName    >> ");
-                        food.name = scanner.nextLine();
-                        System.out.print("PrepTime    >> ");
-                        food.preparationTime = scanner.nextLine();
-                        System.out.print("Ingredients >> ");
-                        food.ingredients = scanner.nextLine().split(",");
-                        System.out.println("Food updated successfully!");
+                    if (menuId > 0 && menuId <= menu.size()) {
+                        MenuManagement menus = menu.get(menuId - 1);
+                        if(menus instanceof Food){
+                            Food food = (Food) menus;
+                            System.out.print("FoodName    >> ");
+                            food.name = scanner.nextLine();
+                            System.out.print("PrepTime    >> ");
+                            food.preparationTime = scanner.nextLine();
+                            System.out.print("Price    >> ");
+                            food.price = scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("Ingredients >> ");
+                            food.ingredients = scanner.nextLine().split(",");
+                        }else {
+                            Drink drink = (Drink) menus;
+                            System.out.print("FoodName    >> ");
+                            drink.name = scanner.nextLine();
+                            System.out.print("Price    >> ");
+                            drink.price = scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("Volume    >> ");
+                            int volume = scanner.nextInt();
+                            drink.updateVolume(volume);
+                            System.out.print("isHot    >> ");
+                            boolean isHot = scanner.nextBoolean();
+                            drink.setTemperature(isHot);
+                        }
+                        System.out.println("Menu updated successfully!");
                     } else {
                         System.out.println("Invalid FoodId!");
                     }
                     break;
                 case 4:
-                    System.out.println("=== Opsi Delete Food ===");
-                    System.out.print("FoodId >> ");
-                    foodId = scanner.nextInt();
-                    if (foodId > 0 && foodId <= menu.size()) {
-                        menu.remove(foodId - 1);
-                        System.out.println("Food deleted successfully!");
+                    System.out.println("=== Opsi Delete Menu ===");
+                    System.out.print("MenuId >> ");
+                    menuId = scanner.nextInt();
+                    scanner.nextLine();
+                    if (menuId > 0 && menuId <= menu.size()) {
+                        for (int i = 0; i < menu.size(); i++) {
+                            MenuManagement get = menu.get(i);
+                            if(menuId == get.id){
+                               menu.remove(i);
+                               System.out.println("Berhasil di hapus");
+                               break;
+                            }
+                        }
                     } else {
                         System.out.println("Invalid FoodId!");
                     }
@@ -311,9 +372,10 @@ class Seller extends User {
                 default:
                     System.out.println("Invalid choice, try again!");
             }
+            
+        
         }
     }
-
     public void updateOrderStatus(ArrayList<Order> orders) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("=== Update Order Status ===");
@@ -356,7 +418,7 @@ class Seller extends User {
 
 class Admin extends User {
     // private int adminLevel;
-    //    private ArrayList<Buyer> registerQeueu;
+    // private ArrayList<Buyer> registerQeueu;
     
     public Admin(int id, String name, String email, String phone) {
         this.id = id;
@@ -366,14 +428,14 @@ class Admin extends User {
     }
 
     
-    public void manageMenu(ArrayList<Food> menu) {
+    public void manageMenu(ArrayList<MenuManagement> menu) {
         Scanner scanner = new Scanner(System.in);
         while (true) {
             System.out.println("==== Opsi Menu ====");
-            System.out.println("1. Create Food");
-            System.out.println("2. Show Food");
-            System.out.println("3. Update Food");
-            System.out.println("4. Delete Food");
+            System.out.println("1. Create Menu");
+            System.out.println("2. Show Menu");
+            System.out.println("3. Update Menu");
+            System.out.println("4. Delete Menu");
             System.out.println("5. Back");
             System.out.println("====================");
             System.out.print(">> ");
@@ -382,51 +444,114 @@ class Admin extends User {
 
             switch (choice) {
                 case 1:
-                    System.out.println("=== Opsi Create Food ===");
-                    System.out.print("FoodName    >> ");
+                    System.out.println("=== Opsi Create Menu ===");
+                    System.out.println("1. Create Food");
+                    System.out.println("2. Create drink");
+                    System.out.println(">> ");
+                    int createChoices = scanner.nextInt();
+                    scanner.nextLine();
+                    System.out.print("Name    >> ");
                     String name = scanner.nextLine();
-                    System.out.print("PrepTime    >> ");
-                    String prepTime = scanner.nextLine();
-                    System.out.print("Ingredients >> ");
-                    String ingredients = scanner.nextLine();
-                    menu.add(new Food(menu.size() + 1, name, 0, prepTime, ingredients.split(",")));
-                    System.out.println("Food created successfully!");
-                    break;
+                    System.out.println("Price    >>");
+                    float price = scanner.nextFloat();
+                    scanner.nextLine();
+                    System.out.println("Stock    >>");
+                    int stock = scanner.nextInt();
+                    scanner.nextLine();
+                switch (createChoices) {
+                    case 1:
+                        System.out.print("PrepTime    >> ");
+                        String prepTime = scanner.nextLine();
+                        System.out.print("Ingredients >> ");
+                        String ingredients = scanner.nextLine();
+                        menu.add(new Food(menu.size() + 1, name, price, prepTime, ingredients.split(","),stock));
+                        break;
+                    case 2:
+                        System.out.print("Volume    >> ");
+                        int volume = scanner.nextInt();
+                        System.out.print("Is Hot >> ");
+                        boolean isHot = scanner.nextBoolean();
+                        menu.add(new Drink(menu.size()+1, name, price, volume, isHot, stock));
+                        break;
+                    default:
+                        System.out.println("[error]masukan pilihan yang benar");
+                        break;
+                }
                 case 2:
-                    System.out.println("=== Opsi Show Food ===");
+                    System.out.println("=== Opsi Show Menu ===");
                     if (menu.isEmpty()) {
                         System.out.println("data kosong!");
                     } else {
-                        for (Food food : menu) {
-                            food.getDetails();
+                        System.out.println("== List menu Food ==");
+                        System.out.println("== Food ==");
+                        for (MenuManagement menus : menu) {
+                            if(menus instanceof Food){
+                                Food foods = (Food) menus;
+                                foods.getDetails();
+                            }
+                            System.out.println("---------------");
+                        }
+                        System.out.println("== Drinks");
+                        for (MenuManagement menus : menu) {
+                            if(menus instanceof Drink){
+                                Drink drinks = (Drink) menus;
+                                drinks.getDetails();
+                            }
+                            System.out.println("---------------");
                         }
                     }
                     break;
                 case 3:
-                    System.out.println("=== Opsi Update Food ===");
-                    System.out.print("FoodId >> ");
-                    int foodId = scanner.nextInt();
+                    System.out.println("=== Opsi Update Menu ===");
+                    System.out.print("MenuId >> ");
+                    int menuId = scanner.nextInt();
                     scanner.nextLine();
-                    if (foodId > 0 && foodId <= menu.size()) {
-                        Food food = menu.get(foodId - 1);
-                        System.out.print("FoodName    >> ");
-                        food.name = scanner.nextLine();
-                        System.out.print("PrepTime    >> ");
-                        food.preparationTime = scanner.nextLine();
-                        System.out.print("Ingredients >> ");
-                        food.ingredients = scanner.nextLine().split(",");
-                        System.out.println("Food updated successfully!");
+                    if (menuId > 0 && menuId <= menu.size()) {
+                        MenuManagement menus = menu.get(menuId - 1);
+                        if(menus instanceof Food){
+                            Food food = (Food) menus;
+                            System.out.print("FoodName    >> ");
+                            food.name = scanner.nextLine();
+                            System.out.print("PrepTime    >> ");
+                            food.preparationTime = scanner.nextLine();
+                            System.out.print("Price    >> ");
+                            food.price = scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("Ingredients >> ");
+                            food.ingredients = scanner.nextLine().split(",");
+                        }else {
+                            Drink drink = (Drink) menus;
+                            System.out.print("FoodName    >> ");
+                            drink.name = scanner.nextLine();
+                            System.out.print("Price    >> ");
+                            drink.price = scanner.nextInt();
+                            scanner.nextLine();
+                            System.out.print("Volume    >> ");
+                            int volume = scanner.nextInt();
+                            drink.updateVolume(volume);
+                            System.out.print("isHot    >> ");
+                            boolean isHot = scanner.nextBoolean();
+                            drink.setTemperature(isHot);
+                        }
+                        System.out.println("Menu updated successfully!");
                     } else {
                         System.out.println("Invalid FoodId!");
                     }
                     break;
                 case 4:
-                    System.out.println("=== Opsi Delete Food ===");
-                    System.out.print("FoodId >> ");
-                    foodId = scanner.nextInt();
-                    if (foodId > 0 && foodId <= menu.size()) {
-                        menu.remove(foodId - 1);
-                        System.out.println("Food deleted successfully!");
+                    System.out.println("=== Opsi Delete Menu ===");
+                    System.out.print("MenuId >> ");
+                    menuId = scanner.nextInt();
+                    scanner.nextLine();
+                    if (menuId > 0 && menuId <= menu.size()) {
+                        for (int i = 0; i < menu.size(); i++) {
+                            MenuManagement get = menu.get(i);
+                            if(menuId == get.id){
+                               menu.remove(i);
+                               System.out.println("Berhasil di hapus");
+                               break;
+                            }
+                        }
                     } else {
                         System.out.println("Invalid FoodId!");
                     }
@@ -577,13 +702,27 @@ class Buyer extends User {
         this.password = pass;
     }
 
-    public void browseMenu(ArrayList<Food> menu) {
+    public void browseMenu(ArrayList<MenuManagement> menu) {
         System.out.println("=== Menu ===");
         if (menu.isEmpty()) {
-            System.out.println("No food available!");
+            System.out.println("data kosong!");
         } else {
-            for (Food food : menu) {
-                food.getDetails();
+            System.out.println("== Menu ==");
+            System.out.println("== Food ==");
+            for (MenuManagement menus : menu) {
+                if(menus instanceof Food){
+                    Food foods = (Food) menus;
+                    foods.getDetails();
+                }
+                System.out.println("---------------");
+            }
+            System.out.println("== Drinks");
+            for (MenuManagement menus : menu) {
+                if(menus instanceof Drink){
+                    Drink drinks = (Drink) menus;
+                    drinks.getDetails();
+                }
+                System.out.println("---------------");
             }
         }
     }
@@ -630,7 +769,7 @@ class Buyer extends User {
         this.phone = phone;
     }
     
-    public void placeOrder(ArrayList<Order> orders, int userId, ArrayList<Food> menu, ArrayList<Table> tables) {
+    public void placeOrder(ArrayList<Order> orders, int userId, ArrayList<MenuManagement> menu, ArrayList<Table> tables) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("=== Order Type ===");
         System.out.println("1. Dine In");
@@ -641,34 +780,48 @@ class Buyer extends User {
         scanner.nextLine();
 
         // Show menu and get food order
-        System.out.println("=== Menu ===");
-        for (Food food : menu) {
-            food.getDetails();
-            System.out.println("----------------");
-        }
-
+        System.out.println("== Menu ==");
+        System.out.println("== Food ==");
+            for (MenuManagement menus : menu) {
+                if(menus instanceof Food){
+                    Food foods = (Food) menus;
+                    foods.getDetails();
+                }
+                System.out.println("---------------");
+            }
+            System.out.println("== Drinks");
+            for (MenuManagement menus : menu) {
+                if(menus instanceof Drink){
+                    Drink drinks = (Drink) menus;
+                    drinks.getDetails();
+                }
+                System.out.println("---------------");
+            }
         System.out.print("Enter Food ID: ");
-        int foodId = scanner.nextInt();
+        int menuId = scanner.nextInt();
         scanner.nextLine();
-
-        if (foodId > 0 && foodId <= menu.size()) {
-            Food food = menu.get(foodId - 1);
+        if (menuId > 0 && menuId <= menu.size()) {
+            MenuManagement menus = menu.get(menuId - 1);
             System.out.print("Enter quantity: ");
             int quantity = scanner.nextInt();
             scanner.nextLine();
-            float total = food.price * quantity;
-
+            // kondisi kalo yang di pesan melebihi stock dan menguranginya
+            if(quantity > menus.stock){
+                System.out.println("[error] stock kurang");
+                return;
+            }else{
+                menus.updateStock(menuId, quantity, menu);
+            }
+            float total = menus.price * quantity;
             Order order;
             if (orderType == 1) { // Dine In
-                
                 order = new DineIn(orders.size() + 1, userId, total, "Pending", "", 
-                    getCurrentDateTime(), tables);
+                getCurrentDateTime(), tables);
             } else { // Take Away
                 System.out.print("Enter pickup time (HH:mm): ");
                 String pickupTime = scanner.nextLine();
                 System.out.print("Enter packaging notes: ");
                 String packagingNotes = scanner.nextLine();
-                
                 order = new TakeAway(orders.size() + 1, userId, total, "Pending", "", 
                     getCurrentDateTime(), pickupTime, packagingNotes);
             }
@@ -739,7 +892,7 @@ class Buyer extends User {
 public class Tubes {
       public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Food> menu = new ArrayList<>();
+        ArrayList<MenuManagement> menu = new ArrayList<>();
         ArrayList<Order> orders = new ArrayList<>();
         // pusat table
         ArrayList<Table> tables = new ArrayList<>();
@@ -855,7 +1008,7 @@ public class Tubes {
                                     buyerAccount.get(indX).browseMenu(menu);
                                     break;
                                 case 2:
-                                    buyerAccount.get(indX).placeOrder(orders, buyerAccount.get(authenticate(buyerAccount)).id, menu, tables);
+                                    buyerAccount.get(indX).placeOrder(orders, buyerAccount.get(indX).id, menu, tables);
                                     break;
                                 case 3:
                                     buyerAccount.get(indX).viewOrders(orders);
@@ -1006,40 +1159,35 @@ class TakeAway extends Order {
 }
 
 class MenuManagement {
-    private ArrayList<Food> menu;
-
-    public MenuManagement() {
-        this.menu = new ArrayList<>();
+    protected int id;
+    protected String name;
+    protected float price;
+    protected int stock;
+    public MenuManagement(int id, float price, int stock) {
+        this.id = id;
+        this.price = price;
+        this.stock = stock;
     }
-
-    public void updateStock(int foodId, int newStock) {
+    
+    public void updateStock(int foodId, int newStock, ArrayList<MenuManagement> menu) {
         if (foodId > 0 && foodId <= menu.size()) {
-            Food food = menu.get(foodId - 1);
-            food.price = newStock;
+            MenuManagement menus = menu.get(foodId - 1);
+            menus.stock = stock - newStock;
             System.out.println("Stock updated successfully!");
         } else {
             System.out.println("Invalid FoodId!");
         }
     }
-
-    public void getDetails() {
-        for (Food food : menu) {
-            food.getDetails();
-        }
-    }
+    
 }
 
-class Food {
-    protected int id;
-    protected String name;
-    protected float price;
+class Food extends MenuManagement {
     protected String preparationTime;
     protected String[] ingredients;
 
-    public Food(int id, String name, float price, String preparationTime, String[] ingredients) {
-        this.id = id;
+    public Food(int id, String name, float price, String preparationTime, String[] ingredients, int stock) {
+        super(id, price, stock);
         this.name = name;
-        this.price = price;
         this.preparationTime = preparationTime;
         this.ingredients = ingredients;
     }
@@ -1047,6 +1195,8 @@ class Food {
     public void getDetails() {
         System.out.println("Id          >> " + id);
         System.out.println("FoodName    >> " + name);
+        System.out.println("Price    >> " + price);
+        System.out.println("Stock    >> " + stock);
         System.out.println("PrepTime    >> " + preparationTime);
         System.out.println("Ingredients >> " + String.join(", ", ingredients));
     }
@@ -1070,12 +1220,12 @@ class Food {
     }
 }
 
-class Drink extends Food {
+class Drink extends MenuManagement {
     private int volume;
     private boolean isHot;
 
-    public Drink(int id, String name, float price, String preparationTime, String[] ingredients, int volume, boolean isHot) {
-        super(id, name, price, preparationTime, ingredients);
+    public Drink(int id, String name, float price, int volume, boolean isHot, int stock) {
+        super(id, price, stock);
         this.volume = volume;
         this.isHot = isHot;
     }
@@ -1089,6 +1239,15 @@ class Drink extends Food {
         this.isHot = isHot;
         System.out.println("Temperature set to: " + (isHot ? "Hot" : "Cold"));
     }
+    public void getDetails() {
+        System.out.println("Id          >> " + id);
+        System.out.println("FoodName    >> " + name);
+        System.out.println("Price    >> " + price);
+        System.out.println("Stock    >> " + stock);
+        System.out.println("Volume    >> " + volume);
+        System.out.println("isHot >> " + isHot);
+    }
+    
 }
 
 abstract class PaymentManagement {
